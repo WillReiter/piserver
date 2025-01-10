@@ -1,0 +1,5 @@
+login.yaml
+ui/node_modules
+api/venv
+api/images
+api/__pycache__
