@@ -9,6 +9,9 @@ from fastapi import FastAPI
 from fastapi.responses import Response
 from fastapi.responses import StreamingResponse
 from pyvesync import VeSync
+from ultralytics import YOLO
+
+yolo = YOLO('yolo11n.pt')
 
 STOP_EVENT = threading.Event()
 
@@ -29,17 +32,18 @@ def captureImage(cap):
     success, frame = cap.read()
 
     if success:
-        success, buffer = cv2.imencode(".jpg", frame)
+        results = yolo(frame)
+        annotated_frame = results[0].plot()
+        success, buffer = cv2.imencode(".jpg", annotated_frame)
 
         if success:
             return buffer.tobytes()
 
 class Webcam():
     def __init__(self):
-        indices = getCameraIndex()
+        # If you want to check all possible camera indices, use getCameraIndex()
+        # For now, leaving this hardcoded to zero
         index = 0
-        if len(indices) == 1:
-            index = indices[0]
         self.videoCapture = cv2.VideoCapture(index)
         self.videoCapture.set(3, 1280)
         self.videoCapture.set(4, 720)
