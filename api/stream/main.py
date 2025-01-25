@@ -109,18 +109,3 @@ def get_image():
 @app.get("/mjpeg")
 async def stream_data():
     return StreamingResponse(consumer(output), media_type="multipart/x-mixed-replace; boundary=frame")
-
-@app.get("/toggle")
-def toggleSwitch():
-    manager = VeSync("REPLACEME", "REPLACEME")
-    if not manager.login():
-        return Response(content={"message": "Unable to login"}, status_code="404", media_type="application/json")
-    manager.update()
-    my_switch = manager.outlets[0]
-    if(my_switch.device_status == "on"):
-        my_switch.turn_off()
-    else:
-        my_switch.turn_on()
-
-
-
